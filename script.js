@@ -1,44 +1,64 @@
-function getComputerChoice() {
-  const randomNbr = Math.random();
-  if (randomNbr < 0.34) {
-    return "rock";
-  } else if (randomNbr < 0.67) {
-    return "paper";
-  } else {
-    return "scissors";
-  }
-}
-
-function getHumanChoice() {
-  let choice = prompt("Rock, Paper or Scissors?");
-  return choice.toLowerCase(); // attention à ne pas utiliser toLocaleLowerCase()
-}
-
+// Étape 1 : Variables pour stocker le score
 let humanScore = 0;
 let computerScore = 0;
 
-function playRound(humanChoice, computerChoice) {
-  humanChoice = humanChoice.toLowerCase();
-
-  if (humanChoice === computerChoice) {
-    console.log(`It's a tie! Both chose ${humanChoice}`);
-  } else if (
-    (humanChoice === "rock" && computerChoice === "scissors") ||
-    (humanChoice === "paper" && computerChoice === "rock") ||
-    (humanChoice === "scissors" && computerChoice === "paper")
-  ) {
-    humanScore++;
-    console.log(`You win! ${humanChoice} beats ${computerChoice}`);
-  } else {
-    computerScore++;
-    console.log(`You lose! ${computerChoice} beats ${humanChoice}`);
-  }
-
-  console.log(`Score => You: ${humanScore}, Computer: ${computerScore}`);
+// Étape 2 : Fonction pour le choix de l'ordi
+function getComputerChoice() {
+  const choices = ["rock", "paper", "scissors"];
+  const randomIndex = Math.floor(Math.random() * 3);
+  return choices[randomIndex];
 }
 
-// Appel du round avec les bonnes variables
-const humanChoice = getHumanChoice();       // appelle la fonction et stocke le résultat
-const computerChoice = getComputerChoice(); // pareil
+// Étape 3 : Fonction qui joue un round
+function playRound(humanChoice, computerChoice) {
+  if (humanChoice === computerChoice) {
+    return "It's a tie!";
+  }
 
-playRound(humanChoice, computerChoice);
+  const winConditions = {
+    rock: "scissors",
+    paper: "rock",
+    scissors: "paper",
+  };
+
+  if (winConditions[humanChoice] === computerChoice) {
+    humanScore++;
+    return `You win! ${humanChoice} beats ${computerChoice}`;
+  } else {
+    computerScore++;
+    return `You lose! ${computerChoice} beats ${humanChoice}`;
+  }
+}
+
+// Étape 4 : Fonction pour mettre à jour l’affichage du score
+function updateScore() {
+  const scoreDisplay = document.getElementById("score");
+  scoreDisplay.textContent = `Score: You ${humanScore} - Computer ${computerScore}`;
+}
+
+// Étape 5 : Fonction pour vérifier s'il y a un gagnant
+function checkWinner() {
+  const winnerDisplay = document.getElementById("winner");
+  if (humanScore === 5) {
+    winnerDisplay.textContent = "🎉 You won the game!";
+  } else if (computerScore === 5) {
+    winnerDisplay.textContent = "💻 Computer won the game!";
+  }
+}
+
+// Étape 6 : Fonction appelée quand on clique sur un bouton
+function handleClick(humanChoice) {
+  if (humanScore >= 5 || computerScore >= 5) return;
+
+  const computerChoice = getComputerChoice();
+  const result = playRound(humanChoice, computerChoice);
+
+  document.getElementById("round-result").textContent = result;
+  updateScore();
+  checkWinner();
+}
+
+// Étape 7 : Attacher les écouteurs d’événements aux boutons
+document.getElementById("rock").addEventListener("click", () => handleClick("rock"));
+document.getElementById("paper").addEventListener("click", () => handleClick("paper"));
+document.getElementById("scissors").addEventListener("click", () => handleClick("scissors"));
